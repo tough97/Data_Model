@@ -2,7 +2,6 @@ package com.ynjs.data;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ynjs.data.excp.IllegalJSONFormatException;
 
@@ -180,14 +179,6 @@ public final class PropertyValue {
     public ObjectNode putValue(final ObjectNode objectNode){
         objectNode.put(VALUE, value).put(TYPE, type.equals(String.class) ? "string" : type.equals(java.util.Date.class) ? "date" : type.getCanonicalName());
         return objectNode;
-    }
-
-    public ObjectNode toObjectNode() {
-        return new ObjectMapper().createObjectNode().put(VALUE, value)
-                .put(TYPE, type.equals(String.class) ? "string" : type.equals(java.util.Date.class) ? "date" : type.getCanonicalName());
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, IllegalJSONFormatException {
     }
 
 }

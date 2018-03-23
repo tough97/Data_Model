@@ -8,7 +8,6 @@ import com.ynjs.data.excp.TreeNodeConflictException;
 import com.ynjs.data.excp.TreeNodeInstanciationException;
 import com.ynjs.data.listener.NodeListener;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -151,8 +150,8 @@ public final class Node extends TreeElement {
         System.out.println(r1);
 
         final Node n = new Node(ret, 0);
-        final String r2 = ret.toString();
-        System.out.println(r1);
+        final String r2 = n.toJSONObject().toString();
+        System.out.println(r2);
 
         System.out.println("---------------------------------------------------------------------------");
         System.out.println(r1.equals(r2));
