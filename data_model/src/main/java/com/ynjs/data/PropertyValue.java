@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat;
 
 public final class PropertyValue {
 
-    private static final String VALUE = "v";
-    private static final String TYPE = "t";
+    protected static final String VALUE = "v";
+    protected static final String TYPE = "t";
 
     private static SimpleDateFormat formatter;
 
@@ -101,61 +101,61 @@ public final class PropertyValue {
         return checkType(java.util.Date.class);
     }
 
-    public PropertyValue setValue(final String value) {
+    public synchronized PropertyValue setValue(final String value) {
         this.value = value;
         type = String.class;
         return this;
     }
 
-    public PropertyValue setValue(final int value) {
+    public synchronized PropertyValue setValue(final int value) {
         this.value = String.valueOf(value);
         type = int.class;
         return this;
     }
 
-    public PropertyValue setValue(final float value) {
+    public synchronized PropertyValue setValue(final float value) {
         this.value = String.valueOf(value);
         type = float.class;
         return this;
     }
 
-    public PropertyValue setValue(final double value) {
+    public synchronized PropertyValue setValue(final double value) {
         this.value = String.valueOf(value);
         type = double.class;
         return this;
     }
 
-    public PropertyValue setValue(final java.util.Date value) {
+    public synchronized PropertyValue setValue(final java.util.Date value) {
         this.value = formatter.format(value);
         type = java.util.Date.class;
         return this;
     }
 
-    public PropertyValue setValue(final short value) {
+    public synchronized PropertyValue setValue(final short value) {
         this.value = String.valueOf(value);
         type = short.class;
         return this;
     }
 
-    public PropertyValue setValue(final byte value) {
+    public synchronized PropertyValue setValue(final byte value) {
         this.value = String.valueOf(value);
         type = byte.class;
         return this;
     }
 
-    public PropertyValue setValue(final long value) {
+    public synchronized PropertyValue setValue(final long value) {
         this.value = String.valueOf(value);
         type = long.class;
         return this;
     }
 
-    public PropertyValue setValue(final boolean value) {
+    public synchronized PropertyValue setValue(final boolean value) {
         this.value = String.valueOf(value);
         type = boolean.class;
         return this;
     }
 
-    public PropertyValue setValue(final char value) {
+    public synchronized PropertyValue setValue(final char value) {
         this.value = Character.toString(value);
         type = char.class;
         return this;
@@ -163,7 +163,7 @@ public final class PropertyValue {
 
     //CAUTION: this is temporary solution, value supports
     //Objects now, but use it with caution
-    public PropertyValue setValue(final Object object) {
+    public synchronized PropertyValue setValue(final Object object) {
         this.value = object.toString();
         type = object.getClass();
         return this;
@@ -177,41 +177,17 @@ public final class PropertyValue {
         return type;
     }
 
+    public ObjectNode putValue(final ObjectNode objectNode){
+        objectNode.put(VALUE, value).put(TYPE, type.equals(String.class) ? "string" : type.equals(java.util.Date.class) ? "date" : type.getCanonicalName());
+        return objectNode;
+    }
+
     public ObjectNode toObjectNode() {
         return new ObjectMapper().createObjectNode().put(VALUE, value)
                 .put(TYPE, type.equals(String.class) ? "string" : type.equals(java.util.Date.class) ? "date" : type.getCanonicalName());
     }
 
     public static void main(String[] args) throws ClassNotFoundException, IllegalJSONFormatException {
-        final PropertyValue a = new PropertyValue().setValue(1);
-        final PropertyValue b = new PropertyValue().setValue(1.1f);
-        final PropertyValue c = new PropertyValue().setValue(1.1);
-        final PropertyValue d = new PropertyValue().setValue(new java.util.Date(System.currentTimeMillis()));
-        final PropertyValue e = new PropertyValue().setValue("测试测试，虎虎虎");
-        final PropertyValue f = new PropertyValue().setValue('c');
-
-        System.out.println(a.toObjectNode());
-        System.out.println(b.toObjectNode());
-        System.out.println(c.toObjectNode());
-        System.out.println(d.toObjectNode());
-        System.out.println(e.toObjectNode());
-        System.out.println(f.toObjectNode());
-
-        System.out.println("---------------------------------");
-
-        final PropertyValue a1 = new PropertyValue(a.toObjectNode());
-        final PropertyValue b1 = new PropertyValue(b.toObjectNode());
-        final PropertyValue c1 = new PropertyValue(c.toObjectNode());
-        final PropertyValue d1 = new PropertyValue(d.toObjectNode());
-        final PropertyValue e1 = new PropertyValue(e.toObjectNode());
-        final PropertyValue f1 = new PropertyValue(f.toObjectNode());
-
-        System.out.println(a1.toObjectNode());
-        System.out.println(b1.toObjectNode());
-        System.out.println(c1.toObjectNode());
-        System.out.println(d1.toObjectNode());
-        System.out.println(e1.toObjectNode());
-        System.out.println(f1.toObjectNode());
     }
 
 }
