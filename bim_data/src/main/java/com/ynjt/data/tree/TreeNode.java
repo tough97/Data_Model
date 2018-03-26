@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TreeNode extends TreeElement{
+public class TreeNode extends TreeElement {
 
     private static IDGenerator idGenerator = new UUIDGenerator();
     private TreeNodeListener nodeListener;
@@ -17,56 +17,80 @@ public class TreeNode extends TreeElement{
     public static void setIdGenerator(final IDGenerator idGenerator) {
         TreeNode.idGenerator = idGenerator;
     }
-    
+
     private ConcurrentHashMap<String, TreeElement> childrenElements =
             new ConcurrentHashMap<String, TreeElement>();
 
-    public<Target extends TreeElement> Target addChild(final String id, final String name, final Class<? extends Target> targetClass)
-            throws  TreeNodeException{
+    public <Target extends TreeElement> Target addChild(final String id, final String name, final Class<? extends Target> targetClass)
+            throws TreeNodeException {
         try {
             final Constructor<Target> constructor = (Constructor<Target>) targetClass.getDeclaredConstructor();
             final TreeElement child = constructor.newInstance();
             childrenElements.put(child.setName(name).setId(id).getId(), child.setParent(this));
+            if (nodeListener != null) {
+                nodeListener.onChildAdded(child, this);
+            }
+            updated();
             return (Target) child;
-        } catch (final Exception ex){
+        } catch (final Exception ex) {
             throw new TreeNodeException(ex);
         }
     }
 
-    public TreeNode addChild(final TreeElement element){
+    public TreeNode addChild(final TreeElement element) {
         element.setParent(this);
         childrenElements.put(element.getId(), element);
+        if (nodeListener != null) {
+            nodeListener.onChildAdded(element, this);
+        }
+        updated();
         return this;
     }
 
-    public TreeElement getChild(final String key){
+    public TreeElement removeChild(final String key) {
+        final TreeElement element = childrenElements.remove(key);
+        if (element != null) {
+            if(nodeListener != null){
+                nodeListener.onChildRemoved(element, this);
+            }
+            element.setParent(null);
+            element.setDepth(0);
+            updated();
+        } else {
+            accessed();
+        }
+        return element;
+    }
+
+    public TreeElement getChild(final String key) {
+        accessed();
         return childrenElements.get(key);
     }
 
-    public Set<String> getChildKeySet(){
+    public Set<String> getChildKeySet() {
         return childrenElements.keySet();
     }
 
-    public Collection<TreeElement> getChildElements(){
+    public Collection<TreeElement> getChildElements() {
         return childrenElements.values();
     }
 
-    public int getChildrenSize(){
+    public int getChildrenSize() {
         return childrenElements.size();
     }
 
     @Override
-    public TreeNode setDepth(final int depth){
+    public TreeNode setDepth(final int depth) {
         super.setDepth(depth);
-        for(final TreeElement child : childrenElements.values()){
-            child.setDepth( depth + 1);
+        for (final TreeElement child : childrenElements.values()) {
+            child.setDepth(depth + 1);
         }
         return this;
     }
 
     public TreeElement clone() {
         final TreeNode node = new TreeNode();
-        for(final TreeElement element : childrenElements.values()){
+        for (final TreeElement element : childrenElements.values()) {
             node.childrenElements.put(element.getId(), element.clone());
         }
         cloneProperties(node);
@@ -74,4 +98,8 @@ public class TreeNode extends TreeElement{
         return node;
     }
 
+    public TreeNode setNodeListener(final TreeNodeListener nodeListener) {
+        this.nodeListener = nodeListener;
+        return this;
+    }
 }
