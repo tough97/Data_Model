@@ -19,12 +19,12 @@ public class TreeNode extends TreeElement{
     private ConcurrentHashMap<String, TreeElement> childrenElements =
             new ConcurrentHashMap<String, TreeElement>();
 
-    public<Target extends TreeElement> TreeNode addChild(final String id, final String name, final Class<? extends Target> targetClass)
+    public<Target extends TreeElement> Target addChild(final String id, final String name, final Class<? extends Target> targetClass)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final Constructor<Target> constructor = (Constructor<Target>) targetClass.getDeclaredConstructor();
         final TreeElement child = constructor.newInstance();
         childrenElements.put(child.setName(name).setId(id).getId(), child.setParent(this));
-        return this;
+        return (Target) child;
     }
 
     public TreeNode addChild(final TreeElement element){

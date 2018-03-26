@@ -97,7 +97,7 @@ public abstract class TreeElement {
         return this;
     }
 
-    protected synchronized TreeElement setId(final String id) {
+    public synchronized TreeElement setId(final String id) {
         this.id = id;
         return this;
     }
