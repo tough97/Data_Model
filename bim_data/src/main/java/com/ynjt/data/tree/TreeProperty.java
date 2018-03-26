@@ -102,6 +102,19 @@ public final class TreeProperty {
         return this;
     }
 
+    public synchronized String getValue(){
+        return value;
+    }
+
+    public synchronized TreeProperty setType(final Class type) {
+        this.type = type;
+        return this;
+    }
+
+    public synchronized Class getType(){
+        return type;
+    }
+    
     //CAUTION: this is temporary solution, value supports
     //Objects now, but use it with caution
     public synchronized TreeProperty setValue(final Object object) {

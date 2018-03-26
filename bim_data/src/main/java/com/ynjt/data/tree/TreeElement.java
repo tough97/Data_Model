@@ -15,53 +15,53 @@ public abstract class TreeElement {
 
     //functional properties
     private long lastAccessed;
-    private long lastUpdated ;
+    private long lastUpdated;
     private long maxAccessIdleTime = DEFAULT_MAX_ACCESS_TIME;
     private long maxUpdateIdleTime = DEFAULT_MAX_UPDATE_TIME;
     private TreePropertyListener propertyListener;
-        
+
     //data properties
     private String id;
     private String name;
     protected int depth = 0;
     protected TreeNode parent = null;
-    
-    protected TreeElement(){
+
+    protected TreeElement() {
         lastAccessed = System.currentTimeMillis();
         lastUpdated = System.currentTimeMillis();
     }
 
-    public synchronized TreeElement accessed(){
+    public synchronized TreeElement accessed() {
         lastAccessed = System.currentTimeMillis();
         return this;
     }
 
-    public synchronized TreeElement updated(){
+    public synchronized TreeElement updated() {
         lastUpdated = System.currentTimeMillis();
         accessed();
         return this;
     }
-    
+
 
     //data methods
-    public TreeElement setProperty(final String key, final TreeProperty property){
+    public TreeElement setProperty(final String key, final TreeProperty property) {
         final TreeProperty originalProperty = properties.put(key, property);
-        if(propertyListener != null){
+        if (propertyListener != null) {
             propertyListener.onPropertySet(key, originalProperty, property, this);
         }
         updated();
         return this;
     }
 
-    public TreeProperty getProperty(final String key){
+    public TreeProperty getProperty(final String key) {
         final TreeProperty property = properties.get(key);
         accessed();
         return property;
     }
 
-    public TreeProperty removeProperty(final String key){
+    public TreeProperty removeProperty(final String key) {
         final TreeProperty property = properties.remove(key);
-        if(propertyListener != null){
+        if (propertyListener != null) {
             propertyListener.onPropertyDeleted(key, property, this);
         }
         updated();
@@ -78,20 +78,20 @@ public abstract class TreeElement {
         updated();
         return this;
     }
-    
-    protected int getPropertiSize(){
+
+    public int getPropertiSize() {
         accessed();
         return properties.size();
     }
 
     //functional methods
 
-    public Set<String> propertiKeySet(){
+    public Set<String> getPropertyKeySet() {
         accessed();
         return properties.keySet();
     }
 
-    protected synchronized TreeElement setParent(final TreeNode parent){
+    public synchronized TreeElement setParent(final TreeNode parent) {
         this.parent = parent;
         this.depth = parent.getDepth() + 1;
         return this;
@@ -106,7 +106,7 @@ public abstract class TreeElement {
         return id;
     }
 
-    protected long getIdleTime(){
+    protected long getIdleTime() {
         return System.currentTimeMillis() - lastUpdated > lastAccessed ? lastUpdated : lastAccessed;
     }
 
@@ -119,7 +119,7 @@ public abstract class TreeElement {
         return propertyListener;
     }
 
-    protected void cloneProperties(final TreeElement target){
+    protected void cloneProperties(final TreeElement target) {
         target.properties = new ConcurrentHashMap<String, TreeProperty>();
         target.properties.putAll(this.properties);
         target.id = this.id;
@@ -150,11 +150,19 @@ public abstract class TreeElement {
         return depth;
     }
 
-    public boolean isLeaf(){
+    public boolean isLeaf() {
         return this.getClass().equals(TreeLeaf.class);
     }
 
-    public boolean isNode(){
+    public boolean isNode() {
         return this.getClass().equals(TreeNode.class);
     }
+
+    public TreeElement setDepth(final int depth){
+        if(depth > 0){
+            this.depth = depth;
+        }
+        return this;
+    }
+    
 }

@@ -39,7 +39,7 @@ public class PropertyKeyExistsFilter implements TreeFilter {
             }
         }
 
-        for (final String key : element.propertiKeySet()) {
+        for (final String key : element.getPropertyKeySet()) {
             if (keySet.contains(key)) {
                 matchFound = true;
                 ret.setProperty(key, element.getProperty(key).clone());

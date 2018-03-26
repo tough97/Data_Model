@@ -5,6 +5,7 @@ import com.ynjt.data.tree.util.UUIDGenerator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,8 +42,21 @@ public class TreeNode extends TreeElement{
         return childrenElements.keySet();
     }
 
+    public Collection<TreeElement> getChildElements(){
+        return childrenElements.values();
+    }
+
     public int getChildrenSize(){
         return childrenElements.size();
+    }
+
+    @Override
+    public TreeNode setDepth(final int depth){
+        super.setDepth(depth);
+        for(final TreeElement child : childrenElements.values()){
+            child.setDepth( depth + 1);
+        }
+        return this;
     }
 
     public TreeElement clone() {
