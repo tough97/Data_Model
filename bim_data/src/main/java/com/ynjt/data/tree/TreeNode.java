@@ -1,10 +1,10 @@
 package com.ynjt.data.tree;
 
+import com.ynjt.data.tree.listener.TreeNodeListener;
 import com.ynjt.data.tree.util.IDGenerator;
 import com.ynjt.data.tree.util.UUIDGenerator;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TreeNode extends TreeElement{
 
     private static IDGenerator idGenerator = new UUIDGenerator();
+    private TreeNodeListener nodeListener;
 
     public static void setIdGenerator(final IDGenerator idGenerator) {
         TreeNode.idGenerator = idGenerator;
@@ -21,11 +22,15 @@ public class TreeNode extends TreeElement{
             new ConcurrentHashMap<String, TreeElement>();
 
     public<Target extends TreeElement> Target addChild(final String id, final String name, final Class<? extends Target> targetClass)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Constructor<Target> constructor = (Constructor<Target>) targetClass.getDeclaredConstructor();
-        final TreeElement child = constructor.newInstance();
-        childrenElements.put(child.setName(name).setId(id).getId(), child.setParent(this));
-        return (Target) child;
+            throws  TreeNodeException{
+        try {
+            final Constructor<Target> constructor = (Constructor<Target>) targetClass.getDeclaredConstructor();
+            final TreeElement child = constructor.newInstance();
+            childrenElements.put(child.setName(name).setId(id).getId(), child.setParent(this));
+            return (Target) child;
+        } catch (final Exception ex){
+            throw new TreeNodeException(ex);
+        }
     }
 
     public TreeNode addChild(final TreeElement element){
@@ -62,11 +67,11 @@ public class TreeNode extends TreeElement{
     public TreeElement clone() {
         final TreeNode node = new TreeNode();
         for(final TreeElement element : childrenElements.values()){
-            final TreeElement clonedElement = element.clone();
             node.childrenElements.put(element.getId(), element.clone());
         }
         cloneProperties(node);
         node.setPropertyListener(this.getPropertyListener());
         return node;
     }
+
 }

@@ -1,13 +1,10 @@
 package com.ynjt.data.tree.io;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.ynjt.data.tree.TreeElement;
-import com.ynjt.data.tree.TreeLeaf;
-import com.ynjt.data.tree.TreeNode;
-import com.ynjt.data.tree.TreeProperty;
+import com.ynjt.data.tree.*;
+import com.ynjt.data.tree.filter.PropertyKeyExistsFilter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +15,11 @@ import java.util.Map;
  * please fo not use this class in production environment
  * it provides only the basic idea about tree operations and
  * serializations
- *
+ * <p>
  * Author: Gang-Liu
  */
 
-public class TreeJSONConvertor {
+public class TreeJSONConverter {
 
     private static final String TREE_ELEMENT_ID = "ti";
     private static final String TREE_ELEMENT_NAME = "tn";
@@ -37,7 +34,9 @@ public class TreeJSONConvertor {
     private static final String TREE_LEAF = "leaf";
 
     private static final Map<String, Class> typeNameMap = new HashMap<>();
-    static{
+    private static final Map<Class, String> nameTypeMap = new HashMap<>();
+
+    static {
         typeNameMap.put(int.class.toString(), int.class);
         typeNameMap.put(short.class.toString(), short.class);
         typeNameMap.put(byte.class.toString(), byte.class);
@@ -48,9 +47,18 @@ public class TreeJSONConvertor {
         typeNameMap.put(char.class.toString(), char.class);
         typeNameMap.put("string", String.class);
         typeNameMap.put("date", java.util.Date.class);
-    }
 
-    private Gson gson = new Gson();
+        nameTypeMap.put(int.class, int.class.toString());
+        nameTypeMap.put(short.class, short.class.toString());
+        nameTypeMap.put(byte.class, byte.class.toString());
+        nameTypeMap.put(long.class, long.class.toString());
+        nameTypeMap.put(float.class, float.class.toString());
+        nameTypeMap.put(double.class, double.class.toString());
+        nameTypeMap.put(boolean.class, boolean.class.toString());
+        nameTypeMap.put(char.class, char.class.toString());
+        nameTypeMap.put(String.class, "string");
+        nameTypeMap.put(java.util.Date.class, "date");
+    }
 
     public JsonObject propertyToJson(final TreeElement element) {
         final JsonObject elementJson = new JsonObject();
@@ -86,20 +94,20 @@ public class TreeJSONConvertor {
         final JsonObject object = new JsonObject();
         object.addProperty(PROPERTY_KEY, key);
         object.addProperty(PROPERTY_VALUE, property.getValue());
-        object.addProperty(PROPERTY_VALUE_TYPE, getTypeName(property.getClass()));
+        object.addProperty(PROPERTY_VALUE_TYPE, getTypeName(property.getType()));
         return object;
     }
 
-    public TreeElement jsonToElement(final JsonObject object) throws JsonFormatException{
+    public TreeElement jsonToElement(final JsonObject object) throws JsonFormatException {
         final String type = getStringProperty(object, TREE_ELEMENT_TYPE_KEY);
         final TreeElement ret = type.equals(TREE_NODE) ? new TreeNode() : new TreeLeaf();
         ret.setId(getStringProperty(object, TREE_ELEMENT_ID))
-        .setName(getStringProperty(object, TREE_ELEMENT_NAME))
-        .setDepth(Integer.parseInt(getStringProperty(object, TREE_ELEMENT_DEPTH)));
+                .setName(getStringProperty(object, TREE_ELEMENT_NAME))
+                .setDepth(Integer.parseInt(getStringProperty(object, TREE_ELEMENT_DEPTH)));
 
         final JsonArray propes = object.getAsJsonArray(PROPERTIES);
-        if(propes != null){
-            for(int index = 0; index < propes.size(); index++){
+        if (propes != null) {
+            for (int index = 0; index < propes.size(); index++) {
                 final JsonObject propertyObject = propes.get(index).getAsJsonObject();
                 final TreeProperty property = jsonToProperty(propes.get(index).getAsJsonObject());
                 final String key = getStringProperty(propertyObject, PROPERTY_KEY);
@@ -107,52 +115,75 @@ public class TreeJSONConvertor {
             }
         }
 
-        if(ret instanceof TreeNode){
+        if (ret instanceof TreeNode) {
             final JsonArray nodeArray = object.getAsJsonArray(SUB_ELEMENT_KEY);
-            for(int index = 0; index < nodeArray.size(); index++){
-                final TreeElement child = jsonToElement(nodeArray.get(index).getAsJsonObject());
-                child.setParent((TreeNode) ret);
+            if (nodeArray != null) {
+                for (int index = 0; index < nodeArray.size(); index++) {
+                    final TreeElement child = jsonToElement(nodeArray.get(index).getAsJsonObject());
+                    ((TreeNode) ret).addChild(child);
+                }
             }
         }
 
         return ret;
     }
 
-    private String getStringProperty(final JsonObject object, final String key) throws JsonFormatException{
-        if(key == null){
+    private String getStringProperty(final JsonObject object, final String key) throws JsonFormatException {
+        if (key == null) {
             throw new JsonFormatException("Key in object can not be null(" + key + ")");
         }
         final JsonElement valueElement = object.get(key);
-        if(valueElement == null){
+        if (valueElement == null) {
             throw new JsonFormatException("Value corresponding to (" + key + ") not found");
         }
         return valueElement.getAsString();
     }
 
-    private TreeProperty jsonToProperty(final JsonObject jsonObject) throws JsonFormatException{
+    private TreeProperty jsonToProperty(final JsonObject jsonObject) throws JsonFormatException {
         final TreeProperty property = new TreeProperty();
         final String value = jsonObject.get(PROPERTY_VALUE).getAsString();
         final String className = jsonObject.get(PROPERTY_VALUE_TYPE).getAsString();
         final Class type = typeNameMap.get(className);
-        if(type == null){
+        if (type == null) {
             throw new JsonFormatException("Data type not supported in deserialization : " + className);
         }
         property.setValue(value);
         property.setType(type);
         return property;
     }
-    
+
 
     private String getTypeName(final Class type) {
         return type.equals(java.util.Date.class) ? "date" : type.equals(String.class) ? "string" : type.toString();
     }
 
 
-    public static void main(String[] args) throws ClassNotFoundException {
-        final Class[] clazz = {int.class, short.class, boolean.class, long.class, double.class, float.class, byte.class, char.class};
-        for(final Class c : clazz){
-            System.out.println(c);
-        }
+    public static void main(String[] args) throws TreeNodeException, JsonFormatException {
+
+        final TreeNode root = new TreeNode();
+        root.setId("root").setName("root").setProperty("key", new TreeProperty().setValue("value"));
+        root.addChild("child", "child", TreeNode.class);
+        root.addChild("child_1", "child_1", TreeNode.class)
+                .addChild("leaf_1", "leaf_1", TreeLeaf.class).setProperty("leaf_p", new TreeProperty().setValue("leaf_"));
+        root.addChild("1", "1", TreeNode.class).addChild("2", "2", TreeNode.class)
+                .setProperty("key", new TreeProperty().setValue("value"));
+        root.setDepth(0);
+        final TreeNode tempRoot = (TreeNode) new PropertyKeyExistsFilter("key").filter(root);
+        final JsonObject ret = new TreeJSONConverter().propertyToJson(tempRoot);
+        final String retStr = ret.toString();
+        System.out.println(retStr);
+
+        System.out.println("----------------");
+
+        final TreeNode temp = (TreeNode) new TreeJSONConverter().jsonToElement(ret);
+        temp.setDepth(0);
+        final JsonObject rr = new TreeJSONConverter().propertyToJson(temp);
+        final String rrStr = rr.toString();
+        System.out.println(rrStr);
+
+        System.out.println("----------------");
+
+        System.out.println(rrStr.equals(retStr));
     }
 
 }

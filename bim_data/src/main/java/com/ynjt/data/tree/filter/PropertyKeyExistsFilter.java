@@ -19,6 +19,12 @@ public class PropertyKeyExistsFilter implements TreeFilter {
 
     //returns null if 
     public TreeElement filter(final TreeElement element) {
+        final TreeElement ret = doFilter(element);
+        ret.setDepth(0);
+        return ret;
+    }
+
+    private TreeElement doFilter(final TreeElement element){
         if (element == null) {
             return null;
         }
@@ -28,10 +34,7 @@ public class PropertyKeyExistsFilter implements TreeFilter {
         if (element instanceof TreeNode) {
             for (final String childKey : ((TreeNode) element).getChildKeySet()) {
                 final TreeElement targetElement = ((TreeNode) element).getChild(childKey);
-
-                System.out.println("Key : " + childKey + " <--> " + (targetElement == null ? "null" : targetElement.getClass()));
-
-                final TreeElement childElement = filter(targetElement);
+                final TreeElement childElement = doFilter(targetElement);
                 if (childElement != null) {
                     matchFound = true;
                     ((TreeNode) ret).addChild(childElement);
@@ -52,6 +55,5 @@ public class PropertyKeyExistsFilter implements TreeFilter {
 
         return matchFound ? ret : null;
     }
-
 
 }
