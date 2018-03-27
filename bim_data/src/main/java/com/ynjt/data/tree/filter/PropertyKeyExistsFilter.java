@@ -32,12 +32,11 @@ public class PropertyKeyExistsFilter implements TreeFilter {
         boolean matchFound = false;
 
         if (element instanceof TreeNode) {
-            for (final String childKey : ((TreeNode) element).getChildKeySet()) {
-                final TreeElement targetElement = ((TreeNode) element).getChild(childKey);
-                final TreeElement childElement = doFilter(targetElement);
-                if (childElement != null) {
+            for(final TreeElement childElement : ((TreeNode) element).getChildElements()){
+                final TreeElement filteredElement = doFilter(childElement);
+                if(filteredElement != null){
+                    ((TreeNode)ret).addChild(filteredElement);
                     matchFound = true;
-                    ((TreeNode) ret).addChild(childElement);
                 }
             }
         }

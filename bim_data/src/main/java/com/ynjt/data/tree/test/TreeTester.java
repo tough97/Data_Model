@@ -13,7 +13,8 @@ public class TreeTester {
     public static void main(String[] args) throws TreeNodeException {
         final TreeNode root = new TreeNode();
         final TreeNode child = root.addChild("child", "child1", TreeNode.class);
-        child.addChild("child_leaf", "child_leaf", TreeLeaf.class).setProperty("t", new TreeProperty().setValue("Target"));
+        child.addChild("child_leaf", "child_leaf", TreeLeaf.class)
+                .setProperty("t", new TreeProperty().setValue("Target"));
         root.addChild("child_2", "child_2", TreeNode.class)
         .addChild("child_3", "child_3", TreeNode.class)
         .addChild("child_4", "child_4", TreeNode.class);

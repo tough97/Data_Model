@@ -50,7 +50,7 @@ public class TreeNode extends TreeElement {
     public TreeElement removeChild(final String key) {
         final TreeElement element = childrenElements.remove(key);
         if (element != null) {
-            if(nodeListener != null){
+            if (nodeListener != null) {
                 nodeListener.onChildRemoved(element, this);
             }
             element.setParent(null);
@@ -60,6 +60,27 @@ public class TreeNode extends TreeElement {
             accessed();
         }
         return element;
+    }
+    
+    /**
+     * This method returns the decendent of this node no matter the depth
+     * if no decendent if found, null will be returned
+     *
+     * @param key
+     * @return
+     */
+    public TreeElement getDecendent(final String key) {
+        for (final TreeElement child : childrenElements.values()) {
+            if (child.getId().equals(key)) {
+                return child;
+            } else if (child instanceof TreeNode) {
+                final TreeElement target = ((TreeNode) child).getDecendent(key);
+                if (target != null) {
+                    return target;
+                }
+            }
+        }
+        return null;
     }
 
     public TreeElement getChild(final String key) {
