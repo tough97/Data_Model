@@ -1,11 +1,20 @@
 package com.ynjt.data.tree;
 
 import com.ynjt.data.tree.listener.TreePropertyListener;
+import com.ynjt.data.tree.util.IDGenerator;
+import com.ynjt.data.tree.util.UUIDGenerator;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class TreeElement {
+public abstract class TreeElement implements Serializable{
+
+    private static IDGenerator idGenerator = new UUIDGenerator();
+
+    public static void setIdGenerator(final IDGenerator idGenerator) {
+        TreeElement.idGenerator = idGenerator;
+    }
 
     private static final long DEFAULT_MAX_ACCESS_TIME = 1000 * 60 * 10;
     private static final long DEFAULT_MAX_UPDATE_TIME = 1000 * 60 * 10;
@@ -27,6 +36,7 @@ public abstract class TreeElement {
     protected TreeNode parent = null;
 
     protected TreeElement() {
+        this.id = idGenerator.generateUniuqeID();
         lastAccessed = System.currentTimeMillis();
         lastUpdated = System.currentTimeMillis();
     }

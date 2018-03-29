@@ -1,9 +1,10 @@
 package com.ynjt.data.tree;
 
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
-public final class TreeProperty {
+public final class TreeProperty implements Serializable{
 
     private static SimpleDateFormat formatter;
 

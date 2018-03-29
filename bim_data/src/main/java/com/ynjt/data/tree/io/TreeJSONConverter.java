@@ -162,10 +162,10 @@ public class TreeJSONConverter {
 
         final TreeNode root = new TreeNode();
         root.setId("root").setName("root").setProperty("key", new TreeProperty().setValue("value"));
-        root.addChild("child", "child", TreeNode.class);
-        root.addChild("child_1", "child_1", TreeNode.class)
-                .addChild("leaf_1", "leaf_1", TreeLeaf.class).setProperty("leaf_p", new TreeProperty().setValue("leaf_"));
-        root.addChild("1", "1", TreeNode.class).addChild("2", "2", TreeNode.class)
+        root.addChild("child", TreeNode.class);
+        root.addChild("child_1", TreeNode.class)
+                .addChild("leaf_1", TreeLeaf.class).setProperty("leaf_p", new TreeProperty().setValue("leaf_"));
+        root.addChild("1", TreeNode.class).addChild("2", TreeNode.class)
                 .setProperty("key", new TreeProperty().setValue("value"));
         root.setDepth(0);
         final TreeNode tempRoot = (TreeNode) new PropertyKeyExistsFilter("key").filter(root);

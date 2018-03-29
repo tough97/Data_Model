@@ -10,23 +10,18 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TreeNode extends TreeElement {
-
-    private static IDGenerator idGenerator = new UUIDGenerator();
+    
     private TreeNodeListener nodeListener;
-
-    public static void setIdGenerator(final IDGenerator idGenerator) {
-        TreeNode.idGenerator = idGenerator;
-    }
 
     private ConcurrentHashMap<String, TreeElement> childrenElements =
             new ConcurrentHashMap<String, TreeElement>();
 
-    public <Target extends TreeElement> Target addChild(final String id, final String name, final Class<? extends Target> targetClass)
+    public <Target extends TreeElement> Target addChild(final String name, final Class<? extends Target> targetClass)
             throws TreeNodeException {
         try {
             final Constructor<Target> constructor = (Constructor<Target>) targetClass.getDeclaredConstructor();
             final TreeElement child = constructor.newInstance();
-            childrenElements.put(child.setName(name).setId(id).getId(), child.setParent(this));
+            childrenElements.put(child.setName(name).getId(), child.setParent(this));
             if (nodeListener != null) {
                 nodeListener.onChildAdded(child, this);
             }

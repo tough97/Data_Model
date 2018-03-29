@@ -57,7 +57,8 @@ public class PerformanceTest {
     public static TreeNode[] addChild(final TreeNode root) throws TreeNodeException {
         final TreeNode[] ret = new TreeNode[WIDTH];
         for(int i = 0; i < WIDTH; i++){
-            ret[i] = root.addChild(ID_PREFIX + (cnt++), "name", TreeNode.class);
+            ret[i] = root.addChild("name", TreeNode.class);
+            ret[i].setId(ID_PREFIX + (cnt++));
             for(final String k : alpha){
                 ret[i].setProperty(k, new TreeProperty().setValue(k));
             }
