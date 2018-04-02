@@ -1,53 +1,43 @@
 package com.test;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicReference;
+import com.hazelcast.core.*;
+import com.hazelcast.logging.LogEvent;
+import com.hazelcast.logging.LogListener;
+import com.hazelcast.logging.LoggingService;
 import com.ynjt.data.tree.*;
-import com.ynjt.data.tree.filter.PropertyKeyExistsFilter;
-import com.ynjt.data.tree.io.TreeJSONConverter;
-import com.ynjt.data.tree.test.PerformanceTest;
-import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
+
+import java.util.Date;
+import java.util.logging.Level;
 
 public class HazelcastServerNodeTest {
-
-    private static final long MB = 1024 * 1024;
-
-    private static int cnt = 0;
 
     public static void main(String[] args) throws TreeNodeException {
         final Config config = new Config();
         config.getNetworkConfig().setPort(5900).setPortAutoIncrement(false);
+        config.getManagementCenterConfig().setEnabled(true).setUrl("http://localhost:8888/mancenter");
+
         final HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
+        final LoggingService service = instance.getLoggingService();
+        service.addLogListener(Level.INFO, new LogListener() {
+            public void log(LogEvent logEvent) {
+            }
+        });
         final IAtomicReference<TreeNode> tree = instance.getAtomicReference("Tree");
-        tree.set((TreeNode) new TreeNode().setId("root").setName("root"));
-        final TreeNode node = tree.get();
-        node.setId("root");
-        node.setName("root_name").setDepth(0);
-
-        PerformanceTest.addChild(node);
-
-        System.out.println("Tree Size = " + ObjectSizeCalculator.getObjectSize(node)/MB);
-        System.out.println("There are " + cnt + " nodes in this tree");
-        cnt --;
-        long startTime = System.currentTimeMillis();
-        final TreeNode target = (TreeNode) node.getDecendent("jiushiaidaoshenchucaiyoutaa,hahahaha" + cnt);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Time used " +(endTime - startTime) + (target == null ? " not found" : " " + target.toString()));
-        System.out.println("target.getDepth() = "+target.getDepth());
-
-        startTime = System.currentTimeMillis();
-        final TreeElement element = new PropertyKeyExistsFilter("wo").filter(node);
-        endTime = System.currentTimeMillis();
-        System.out.println(element.toString());
-        System.out.println(element.getDepth());
-        System.out.println("Filter time used = " + (endTime - startTime));
-
-        System.out.println("--------------------------------------------");
-
-        System.out.println(new TreeJSONConverter().propertyToJson(element).toString());
+        tree.set(createTree());
     }
     
-
+    private static TreeNode createTree() throws TreeNodeException {
+        final TreeNode root = new TreeNode();
+        final TreeNode child = root.addChild("child1", TreeNode.class);
+        child.addChild("child_leaf", TreeLeaf.class)
+                .setProperty("t", new TreeProperty().setValue("Target"));
+        root.addChild("child_2", TreeNode.class)
+                .addChild("child_3", TreeNode.class)
+                .addChild("child_4", TreeNode.class).setProperty("k", new TreeProperty().setValue("p"));
+        root.addChild("child_5", TreeNode.class)
+                .setProperty("t", new TreeProperty().setValue(new Date(System.currentTimeMillis())))
+                .setProperty("no", new TreeProperty().setValue(19811122));
+        return root;
+    }
 }

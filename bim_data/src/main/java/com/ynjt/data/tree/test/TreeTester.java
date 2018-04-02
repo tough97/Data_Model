@@ -5,6 +5,7 @@ import com.ynjt.data.tree.TreeNode;
 import com.ynjt.data.tree.TreeNodeException;
 import com.ynjt.data.tree.TreeProperty;
 import com.ynjt.data.tree.filter.PropertyKeyExistsFilter;
+import com.ynjt.data.tree.io.TreeJSONConverter;
 
 import java.util.Date;
 
@@ -17,13 +18,17 @@ public class TreeTester {
                 .setProperty("t", new TreeProperty().setValue("Target"));
         root.addChild("child_2", TreeNode.class)
         .addChild("child_3", TreeNode.class)
-        .addChild("child_4", TreeNode.class);
+        .addChild("child_4", TreeNode.class).setProperty("k", new TreeProperty().setValue("p"));
         root.addChild("child_5", TreeNode.class)
         .setProperty("t", new TreeProperty().setValue(new Date(System.currentTimeMillis())))
         .setProperty("no", new TreeProperty().setValue(19811122));
-        
 
-        final TreeNode copy = (TreeNode) new PropertyKeyExistsFilter("t").filter(root);
+        System.out.println("Before filtering");
+        System.out.println(new TreeJSONConverter().propertyToJson(root));
+
+        System.out.println("After filtering");
+        final TreeNode copy = (TreeNode) new PropertyKeyExistsFilter("k").filter(root);
+        System.out.println(new TreeJSONConverter().propertyToJson(copy));
         System.out.println("Here");
     }
 

@@ -27,14 +27,17 @@ public class PerformanceTest {
         node.setId("root");
         node.setName("root_name").setDepth(0);
 
+        long startTime = System.currentTimeMillis();
         addChild(node);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time used to construct tree = " + (endTime - startTime));
 
         System.out.println("Tree Size = " + ObjectSizeCalculator.getObjectSize(node)/MB);
         System.out.println("There are " + cnt + " nodes in this tree");
         cnt --;
-        long startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
         final TreeNode target = (TreeNode) node.getDecendent("jiushiaidaoshenchucaiyoutaa,hahahaha" + cnt);
-        long endTime = System.currentTimeMillis();
+        endTime = System.currentTimeMillis();
         System.out.println("Time used " +(endTime - startTime) + (target == null ? " not found" : " " + target.toString()));
         System.out.println("target.getDepth() = "+target.getDepth());
 
