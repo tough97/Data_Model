@@ -1,5 +1,7 @@
 package com.ynjt.data.tree.test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ynjt.data.tree.TreeElement;
 import com.ynjt.data.tree.TreeNode;
 import com.ynjt.data.tree.TreeNodeException;
@@ -7,6 +9,8 @@ import com.ynjt.data.tree.TreeProperty;
 import com.ynjt.data.tree.filter.PropertyKeyExistsFilter;
 import com.ynjt.data.tree.io.TreeJSONConverter;
 import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
+
+import java.io.*;
 
 
 public class PerformanceTest {
@@ -32,6 +36,12 @@ public class PerformanceTest {
         long endTime = System.currentTimeMillis();
         System.out.println("Time used to construct tree = " + (endTime - startTime));
 
+        try {
+            writeObjectToFile(node);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+
         System.out.println("Tree Size = " + ObjectSizeCalculator.getObjectSize(node)/MB);
         System.out.println("There are " + cnt + " nodes in this tree");
         cnt --;
@@ -51,6 +61,16 @@ public class PerformanceTest {
         System.out.println("--------------------------------------------");
 
         System.out.println(new TreeJSONConverter().propertyToJson(element).toString());
+    }
+
+    public static void writeObjectToFile(final Serializable obj) throws IOException {
+        final FileOutputStream fileOutputStream = new FileOutputStream(new File("/home/gang_liu/Desktop/test.json"));
+        final ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        final long start = System.currentTimeMillis();
+        objectOutputStream.writeObject(obj);
+        final long end = System.currentTimeMillis();
+        System.out.println("Time used to write object to file " + (end - start));
+        objectOutputStream.close();
     }
 
     private static final String[] alpha = {

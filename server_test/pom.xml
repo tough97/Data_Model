@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ynjt.hazelcast</groupId>
+    <artifactId>server-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>../bim_data</module>
+    </modules>
+
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>conf</id>-->
+            <!--<build>-->
+                <!--<directory>${dir}</directory>-->
+            <!--</build>-->
+        <!--</profile>-->
+    <!--</profiles>-->
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-all</artifactId>
+            <version>3.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ynjs.data</groupId>
+            <artifactId>bim-data</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--<plugin>-->
+                <!--<groupId>com.github.goldin</groupId>-->
+                <!--<artifactId>copy-maven-plugin</artifactId>-->
+                <!--<version>0.2.5</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>deploy-to-local_dir</id>-->
+                        <!--<phase>install</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<skipIdentical>false</skipIdentical>-->
+                            <!--<failIfNotFound>false</failIfNotFound>-->
+                            <!--<resource>-->
+                                <!--<targetPath>/home/gang_liu/Desktop</targetPath>-->
+                                <!--<directory>${project.build.directory}</directory>-->
+                                <!--<include>*.jar</include>-->
+                            <!--</resource>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.ynjt.server.HazelcastServer</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>jar-with-dependencies</descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-jar-with-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<version>2.6</version>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--&lt;!&ndash;<outputDirectory>${dir}</outputDirectory>&ndash;&gt;-->
+                            <!--<mainClass>com.ynjt.server.HazelcastServer</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+        </plugins>
+    </build>
+
+</project>
