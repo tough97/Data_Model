@@ -21,12 +21,12 @@ public class TreeInitClient {
         clientConfig.setProperty("hazelcast.client.invocation.timeout.seconds", "10");
 
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-        final IAtomicReference<TreeNode> rootReference = client.getAtomicReference("fun");
+        final IAtomicReference<TreeNode> rootReference = client.getAtomicReference("fun_1");
 
         //create root in tree
         System.out.println("Before alter");
         final long start  = System.currentTimeMillis();
-        final ICompletableFuture<Void> l = rootReference.alterAsync(new AddChildNode(10, 5));
+        final ICompletableFuture<Void> l = rootReference.alterAsync(new AddChildNode(10, 6));
         l.andThen(new ExecutionCallback<Void>() {
 
             @Override

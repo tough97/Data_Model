@@ -7,9 +7,7 @@ import com.ynjt.data.tree.TreeNodeException;
 import com.ynjt.data.tree.TreeProperty;
 
 public class AddChildNode implements IFunction<TreeNode, TreeNode> {
-
-    private static final int DEPTH = 5;
-    private static final int WIDTH = 10;
+    
     private static final String ID_PREFIX = "jiushiaidaoshenchucaiyoutaa,hahahaha";
 
     private static final String[] ALPHA = {
@@ -49,17 +47,17 @@ public class AddChildNode implements IFunction<TreeNode, TreeNode> {
         if (root == null) {
             root = new TreeNode();
             addProperty(root.setName("root"));
-            for (int index = 0; index < WIDTH; index++) {
+            for (int index = 0; index < width; index++) {
                 addProperty(root.addChild(ID_PREFIX + index, TreeNode.class));
             }
             populateNode(root);
         } else if (root.getChildrenSize() == 0) {
-            if(root.getDepth() < (DEPTH - 1)){
+            if(root.getDepth() < (depth - 1)){
                 TreeNode child;
-                for(int index = 0; index < WIDTH; index++){
-                    child = root.addChild(ID_PREFIX + ((root.getDepth() + 1) * WIDTH + index), TreeNode.class);
+                for(int index = 0; index < width; index++){
+                    child = root.addChild(ID_PREFIX + ((root.getDepth() + 1) * width + index), TreeNode.class);
                     addProperty(child);
-                    if(child.getDepth() < DEPTH){
+                    if(child.getDepth() < depth){
                         populateNode(child);
                     }
                 }

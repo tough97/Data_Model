@@ -22,7 +22,7 @@ public class HazelCastTreeGetClient {
         clientConfig.setProperty("hazelcast.client.invocation.timeout.seconds", "10");
 
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-        final IAtomicReference<TreeNode> rootRef = client.getAtomicReference("fun");
+        final IAtomicReference<TreeNode> rootRef = client.getAtomicReference("fun_1");
         System.out.println("start");
         long start = System.currentTimeMillis();
         final TreeNode root = rootRef.get();
