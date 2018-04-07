@@ -14,15 +14,6 @@
         <module>../bim_data</module>
     </modules>
 
-    <!--<profiles>-->
-        <!--<profile>-->
-            <!--<id>conf</id>-->
-            <!--<build>-->
-                <!--<directory>${dir}</directory>-->
-            <!--</build>-->
-        <!--</profile>-->
-    <!--</profiles>-->
-
     <dependencies>
         <dependency>
             <groupId>com.hazelcast</groupId>
@@ -43,29 +34,6 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>com.github.goldin</groupId>-->
-                <!--<artifactId>copy-maven-plugin</artifactId>-->
-                <!--<version>0.2.5</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>deploy-to-local_dir</id>-->
-                        <!--<phase>install</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<skipIdentical>false</skipIdentical>-->
-                            <!--<failIfNotFound>false</failIfNotFound>-->
-                            <!--<resource>-->
-                                <!--<targetPath>/home/gang_liu/Desktop</targetPath>-->
-                                <!--<directory>${project.build.directory}</directory>-->
-                                <!--<include>*.jar</include>-->
-                            <!--</resource>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -87,19 +55,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>2.6</version>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--&lt;!&ndash;<outputDirectory>${dir}</outputDirectory>&ndash;&gt;-->
-                            <!--<mainClass>com.ynjt.server.HazelcastServer</mainClass>-->
-                        <!--</manifest>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
         </plugins>
     </build>
 

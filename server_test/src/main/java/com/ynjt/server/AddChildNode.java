@@ -8,7 +8,7 @@ import com.ynjt.data.tree.TreeProperty;
 
 public class AddChildNode implements IFunction<TreeNode, TreeNode> {
 
-    private static final int DEPTH = 10;
+    private static final int DEPTH = 5;
     private static final int WIDTH = 10;
     private static final String ID_PREFIX = "jiushiaidaoshenchucaiyoutaa,hahahaha";
 
@@ -17,6 +17,14 @@ public class AddChildNode implements IFunction<TreeNode, TreeNode> {
             "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
             "x", "y", "z"
     };
+
+    private int depth;
+    private int width;
+
+    public AddChildNode(final int depth, final int width) {
+        this.depth = depth;
+        this.width = width;
+    }
 
     public TreeNode apply(final TreeNode root) {
         try {
@@ -34,13 +42,17 @@ public class AddChildNode implements IFunction<TreeNode, TreeNode> {
     }
 
     private void populateChild(TreeNode root) throws TreeNodeException {
+        populateNode(root);
+    }
+
+    private void populateNode(TreeNode root) throws TreeNodeException {
         if (root == null) {
             root = new TreeNode();
             addProperty(root.setName("root"));
             for (int index = 0; index < WIDTH; index++) {
                 addProperty(root.addChild(ID_PREFIX + index, TreeNode.class));
             }
-            populateChild(root);
+            populateNode(root);
         } else if (root.getChildrenSize() == 0) {
             if(root.getDepth() < (DEPTH - 1)){
                 TreeNode child;
@@ -48,7 +60,7 @@ public class AddChildNode implements IFunction<TreeNode, TreeNode> {
                     child = root.addChild(ID_PREFIX + ((root.getDepth() + 1) * WIDTH + index), TreeNode.class);
                     addProperty(child);
                     if(child.getDepth() < DEPTH){
-                        populateChild(child);
+                        populateNode(child);
                     }
                 }
             }
