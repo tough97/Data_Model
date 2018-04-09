@@ -52,7 +52,6 @@ public abstract class TreeElement implements Serializable{
         return this;
     }
 
-
     //data methods
     public TreeElement setProperty(final String key, final TreeProperty property) {
         final TreeProperty originalProperty = properties.put(key, property);
@@ -103,7 +102,7 @@ public abstract class TreeElement implements Serializable{
 
     public synchronized TreeElement setParent(final TreeNode parent) {
         this.parent = parent;
-        this.depth = parent.getDepth() + 1;
+        this.depth = parent == null ? 0 : parent.getDepth() + 1;
         return this;
     }
 

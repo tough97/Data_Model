@@ -15,26 +15,28 @@ public class TreeInitClient {
     public static void main(String[] args) {
         final ClientConfig clientConfig = new ClientConfig();
         clientConfig.addAddress("47.104.177.198:6900").setSmartRouting(true).setConnectionTimeout(5000);
+//        clientConfig.addAddress("localhost:6900").setSmartRouting(true).setConnectionTimeout(5000);
 
         clientConfig.setProperty("hazelcast.client.heartbeat.interval", "20000");
         clientConfig.setProperty("hazelcast.client.heartbeat.timeout", "99000");
         clientConfig.setProperty("hazelcast.client.invocation.timeout.seconds", "10");
 
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-        final IAtomicReference<TreeNode> rootReference = client.getAtomicReference("fun_1");
+        final IAtomicReference<TreeNode> rootReference = client.getAtomicReference("gang");
+        final TreeNode root = (TreeNode) new TreeNode().setName("root");
+        rootReference.set(root);
+        System.out.println("Root Created");
 
         //create root in tree
         System.out.println("Before alter");
         final long start  = System.currentTimeMillis();
-        final ICompletableFuture<Void> l = rootReference.alterAsync(new AddChildNode(10, 6));
+        final ICompletableFuture<Void> l = rootReference.alterAsync(new AddChildNode(6, 10));
         l.andThen(new ExecutionCallback<Void>() {
 
-            @Override
             public void onResponse(final Void aVoid) {
                 System.out.println("Tree planed with time " + (System.currentTimeMillis() - start));
             }
-
-            @Override
+            
             public void onFailure(final Throwable throwable) {
                 System.out.println("Tree failed with time " + (System.currentTimeMillis() - start));
                 throwable.printStackTrace();

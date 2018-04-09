@@ -62,7 +62,8 @@ public class PerformanceTest {
     }
 
     public static void writeObjectToFile(final Serializable obj) throws IOException {
-        final FileOutputStream fileOutputStream = new FileOutputStream(new File("/Users/gang_liu/Desktop/test.json"));
+//        final FileOutputStream fileOutputStream = new FileOutputStream(new File("/Users/gang_liu/Desktop/test.json"));
+        final FileOutputStream fileOutputStream = new FileOutputStream(new File("/home/gang_liu/Desktop/test.json"));
         final ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         final long start = System.currentTimeMillis();
         objectOutputStream.writeObject(obj);
